@@ -34,4 +34,6 @@ module.exports = Object.freeze({
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV ?? "development",
   port,
+  resendApiKey: process.env.RESEND_API_KEY?.trim() || null,
+  resendFromEmail: process.env.RESEND_FROM_EMAIL?.trim() || null,
 });

@@ -9,6 +9,9 @@ const {
   findOrdersByUserId,
 } = require("../repositories/order.repository");
 const { createOrderItems } = require("../repositories/order-item.repository");
+const userRepository = require("../repositories/user.repository");
+const { sendOrderSummaryEmail } = require("./email.service");
+const logger = require("../config/logger");
 const { ERROR_MESSAGES } = require("../constants/messages");
 const { BadRequestError, NotFoundError } = require("../utils/errors");
 
@@ -77,7 +80,7 @@ function serializeOrder(order) {
   };
 }
 
-async function submitOrderService(userId) {
+async function createOrderFromCart(userId) {
   return sequelize.transaction(async (transaction) => {
     const cart = await findCartWithItemsByUserId(userId, { transaction });
 
@@ -101,6 +104,42 @@ async function submitOrderService(userId) {
       totalAmount,
     };
   });
+}
+
+async function submitOrderService(userId) {
+  const user = await userRepository.findById(userId);
+
+  if (!user) {
+    throw new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND);
+  }
+
+  // The transaction must complete before email is attempted. A provider failure
+  // is non-critical and must never roll back a completed order.
+  const order = await createOrderFromCart(userId);
+
+  try {
+    await sendOrderSummaryEmail({
+      customerName: user.name,
+      customerEmail: user.email,
+      orderId: order.id,
+      items: order.items,
+      totalAmount: order.totalAmount,
+    });
+    logger.info("Order confirmation email sent", {
+      details: { orderId: order.id, userId, recipient: user.email },
+    });
+  } catch (error) {
+    logger.error("Order confirmation email failed", {
+      details: {
+        orderId: order.id,
+        userId,
+        recipient: user.email,
+        error: error.message,
+      },
+    });
+  }
+
+  return order;
 }
 
 async function getOrderService(userId, orderId) {

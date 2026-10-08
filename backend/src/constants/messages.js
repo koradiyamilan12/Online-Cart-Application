@@ -9,6 +9,7 @@ const ERROR_MESSAGES = {
   CART_ITEM_NOT_FOUND: "Cart item not found",
   CART_EMPTY: "Cart is empty",
   ORDER_NOT_FOUND: "Order not found",
+  USER_NOT_FOUND: "User not found",
   INVALID_QUANTITY: "Quantity must be at least 1",
 };
 

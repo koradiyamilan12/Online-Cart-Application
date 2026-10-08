@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.routes");
+const productRoutes = require("./routes/product.routes");
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.get("/health", (_request, response) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({
@@ -27,7 +29,9 @@ app.use((error, _req, res, next) => {
 
   const requestedStatus = error.statusCode || error.status;
   const statusCode =
-    Number.isInteger(requestedStatus) && requestedStatus >= 400 && requestedStatus <= 599
+    Number.isInteger(requestedStatus) &&
+    requestedStatus >= 400 &&
+    requestedStatus <= 599
       ? requestedStatus
       : 500;
   const isClientError = statusCode >= 400 && statusCode < 500;

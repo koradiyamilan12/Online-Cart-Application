@@ -20,8 +20,15 @@ class ConflictError extends CustomError {
   }
 }
 
+class NotFoundError extends CustomError {
+  constructor(message = "Not found", details) {
+    super(message, StatusCodes.NOT_FOUND, details);
+  }
+}
+
 module.exports = {
   BadRequestError,
   UnauthorizedError,
   ConflictError,
+  NotFoundError,
 };

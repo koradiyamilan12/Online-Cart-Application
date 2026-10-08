@@ -5,6 +5,7 @@ const ERROR_MESSAGES = {
   INVALID_TOKEN: "Invalid or expired authentication",
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
   DUPLICATE_EMAIL: "Email already registered",
+  PRODUCT_NOT_FOUND: "Product not found",
 };
 
 const SUCCESS_MESSAGES = {
@@ -12,6 +13,8 @@ const SUCCESS_MESSAGES = {
   LOGIN_SUCCESS: "Login successful",
   LOGOUT_SUCCESS: "Logout successful",
   PROFILE_FETCHED: "Profile fetched successfully",
+  PRODUCTS_FETCHED: "Products fetched successfully",
+  PRODUCT_FETCHED: "Product fetched successfully",
 };
 
 module.exports = {

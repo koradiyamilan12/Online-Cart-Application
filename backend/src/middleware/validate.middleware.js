@@ -1,4 +1,3 @@
-const { z } = require("zod");
 const { BadRequestError } = require("../utils/errors");
 
 function validateBody(schema) {
@@ -7,11 +6,10 @@ function validateBody(schema) {
 
     if (!result.success) {
       const details = result.error.issues.map(({ path, message }) => ({
-        path,
+        path: path.join("."),
         message,
       }));
-
-      return next(new BadRequestError("Validation failed", details));
+      return next(new BadRequestError("Request validation failed", details));
     }
 
     req.body = result.data;

@@ -231,7 +231,7 @@ All authenticated users can view the same products.
 
 ## 5.1 Get Products
 
-Returns the available products.
+Returns the shared product list. An empty list is returned when no products have been seeded.
 
 ### Endpoint
 
@@ -241,7 +241,7 @@ GET /api/products
 
 ### Authentication
 
-Required.
+Required. Send the HTTP-only authentication cookie.
 
 ### Success Response
 
@@ -250,24 +250,55 @@ Required.
 ```json
 {
   "success": true,
+  "message": "Products fetched successfully",
+  "data": [
+    {
+      "id": 1,
+      "name": "Wireless Mouse",
+      "price": "499.00"
+    },
+    {
+      "id": 2,
+      "name": "USB Keyboard",
+      "price": "799.00"
+    }
+  ]
+}
+```
+
+The database must contain at least 8 products after running `npm run seed:products`.
+
+## 5.2 Get Product
+
+Returns one product by its positive integer ID.
+
+### Endpoint
+
+```http
+GET /api/products/:id
+```
+
+### Authentication
+
+Required. Send the HTTP-only authentication cookie.
+
+### Success Response
+
+**Status:** `200 OK`
+
+```json
+{
+  "success": true,
+  "message": "Product fetched successfully",
   "data": {
-    "products": [
-      {
-        "id": "product-1",
-        "name": "Wireless Mouse",
-        "price": 499
-      },
-      {
-        "id": "product-2",
-        "name": "USB Keyboard",
-        "price": 799
-      }
-    ]
+    "id": 1,
+    "name": "Wireless Mouse",
+    "price": "499.00"
   }
 }
 ```
 
-The database must contain at least 8 products.
+An invalid ID returns `400 Bad Request`; a valid ID for a product that does not exist returns `404 Not Found` with `Product not found`.
 
 ---
 
@@ -754,32 +785,32 @@ Example:
 
 # 17. HTTP Status Codes
 
-| Status | Meaning |
-|---|---|
-| `200` | Successful request |
-| `201` | Resource successfully created |
-| `400` | Invalid request |
-| `401` | Authentication required/failed |
-| `404` | Resource not found |
-| `409` | Duplicate resource |
-| `500` | Internal server error |
+| Status | Meaning                        |
+| ------ | ------------------------------ |
+| `200`  | Successful request             |
+| `201`  | Resource successfully created  |
+| `400`  | Invalid request                |
+| `401`  | Authentication required/failed |
+| `404`  | Resource not found             |
+| `409`  | Duplicate resource             |
+| `500`  | Internal server error          |
 
 ---
 
 # 18. API Endpoint Summary
 
-| Method | Endpoint | Auth | Purpose |
-|---|---|---|---|
-| POST | `/api/auth/register` | No | Register user |
-| POST | `/api/auth/login` | No | Login user |
-| POST | `/api/auth/logout` | Yes | Logout user |
-| GET | `/api/auth/me` | Yes | Get current user |
-| GET | `/api/products` | Yes | Get products |
-| GET | `/api/cart` | Yes | Get user's cart |
-| POST | `/api/cart/items` | Yes | Add product |
-| PATCH | `/api/cart/items/:id` | Yes | Update quantity |
-| DELETE | `/api/cart/items/:id` | Yes | Remove product |
-| POST | `/api/orders` | Yes | Submit order |
+| Method | Endpoint              | Auth | Purpose          |
+| ------ | --------------------- | ---- | ---------------- |
+| POST   | `/api/auth/register`  | No   | Register user    |
+| POST   | `/api/auth/login`     | No   | Login user       |
+| POST   | `/api/auth/logout`    | Yes  | Logout user      |
+| GET    | `/api/auth/me`        | Yes  | Get current user |
+| GET    | `/api/products`       | Yes  | Get products     |
+| GET    | `/api/cart`           | Yes  | Get user's cart  |
+| POST   | `/api/cart/items`     | Yes  | Add product      |
+| PATCH  | `/api/cart/items/:id` | Yes  | Update quantity  |
+| DELETE | `/api/cart/items/:id` | Yes  | Remove product   |
+| POST   | `/api/orders`         | Yes  | Submit order     |
 
 ---
 

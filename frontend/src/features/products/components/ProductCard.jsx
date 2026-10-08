@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 
-function ProductCard({ product, onAddToCart }) {
+function ProductCard({ product, onAddToCart, isAdding }) {
   if (!product) {
     return null;
   }
@@ -34,9 +34,9 @@ function ProductCard({ product, onAddToCart }) {
             <p className="mt-1 text-xl font-semibold text-slate-900">{formatCurrency(product.price)}</p>
           </div>
 
-          <Button className="gap-2" onClick={handleAddToCart} type="button">
+          <Button className="gap-2" disabled={Boolean(isAdding)} onClick={handleAddToCart} type="button">
             <FiPlus aria-hidden="true" className="size-4" />
-            Add to cart
+            {isAdding ? "Adding..." : "Add to cart"}
           </Button>
         </div>
       </CardContent>

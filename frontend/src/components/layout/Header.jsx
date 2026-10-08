@@ -6,6 +6,7 @@ import { ROUTES } from "@/constants/routes";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button-variants";
 import { cn } from "@/lib/utils";
+import { clearCart, selectCartState } from "@/features/cart/slices/cartSlice";
 import { logoutUser, selectAuthState } from "@/store/slices/authSlice";
 import Container from "./Container";
 
@@ -13,8 +14,10 @@ function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector(selectAuthState);
+  const { totalItems } = useSelector(selectCartState);
 
   const handleLogout = async () => {
+    dispatch(clearCart());
     const result = await dispatch(logoutUser());
 
     if (logoutUser.fulfilled.match(result)) {
@@ -34,6 +37,15 @@ function Header() {
 
         {isAuthenticated ? (
           <div className="flex items-center gap-3">
+            <Link className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to={ROUTES.CART}>
+              <FiShoppingCart aria-hidden="true" className="size-4" />
+              <span>Cart</span>
+              {totalItems > 0 ? (
+                <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-indigo-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                  {totalItems}
+                </span>
+              ) : null}
+            </Link>
             <Link className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to={ROUTES.DASHBOARD}>
               Dashboard
             </Link>

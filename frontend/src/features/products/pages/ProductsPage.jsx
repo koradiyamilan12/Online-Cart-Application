@@ -1,9 +1,10 @@
 import { FiRefreshCw } from "react-icons/fi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Container from "@/components/layout/Container";
 import { Button } from "@/components/ui/button";
+import { addToCart, selectCartState } from "@/features/cart/slices/cartSlice";
 import ProductGrid from "@/features/products/components/ProductGrid";
 import ProductListSkeleton from "@/features/products/components/ProductListSkeleton";
 import useProducts from "@/features/products/hooks/useProducts";
@@ -12,9 +13,14 @@ import { fetchProducts } from "@/store/slices/productSlice";
 function ProductsPage() {
   const dispatch = useDispatch();
   const { products, isLoading, error } = useProducts();
+  const { pendingProductId } = useSelector(selectCartState);
 
   const handleRefresh = () => {
     dispatch(fetchProducts());
+  };
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart({ productId: product.id, quantity: 1 }));
   };
 
   if (isLoading) {
@@ -66,7 +72,7 @@ function ProductsPage() {
         <p className="text-sm text-slate-600">{products.length} items available</p>
       </div>
 
-      <ProductGrid products={products} />
+      <ProductGrid addingProductId={pendingProductId} onAddToCart={handleAddToCart} products={products} />
     </Container>
   );
 }

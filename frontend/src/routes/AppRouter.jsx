@@ -1,5 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import LoginPage from "@/features/auth/pages/LoginPage";
+import RegisterPage from "@/features/auth/pages/RegisterPage";
 import MainLayout from "@/layouts/MainLayout";
 import HomePage from "@/pages/HomePage";
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -14,14 +16,8 @@ function AppRouter() {
         <Route path={ROUTES.HOME} element={<HomePage />} />
 
         <Route element={<PublicRoute />}>
-          <Route
-            path={ROUTES.LOGIN}
-            element={<PlaceholderPage description="Sign-in will be implemented in Phase 1." title="Sign in" />}
-          />
-          <Route
-            path={ROUTES.REGISTER}
-            element={<PlaceholderPage description="Registration will be implemented in Phase 1." title="Create an account" />}
-          />
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>

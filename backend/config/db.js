@@ -8,12 +8,13 @@ const sequelize = new Sequelize(config.databaseUrl, {
 
 async function connectDB() {
   try {
+    await sequelize.authenticate();
     await sequelize.sync({ alter: true });
     console.info("Database connection established.");
   } catch (error) {
-    console.error("Error connecting to the database:", error);
+    console.error("Error connecting to the database:", error.message);
+    throw error;
   }
-  await sequelize.authenticate();
 }
 
 module.exports = { connectDB, sequelize };

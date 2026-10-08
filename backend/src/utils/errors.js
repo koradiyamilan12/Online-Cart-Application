@@ -2,12 +2,6 @@ const CustomError = require("./customError");
 const { StatusCodes } = require("http-status-codes");
 const { ERROR_MESSAGES } = require("../constants/messages");
 
-class NotFoundError extends CustomError {
-  constructor(message = ERROR_MESSAGES.USER_NOT_FOUND, details) {
-    super(message, StatusCodes.NOT_FOUND, details);
-  }
-}
-
 class BadRequestError extends CustomError {
   constructor(message = ERROR_MESSAGES.BAD_REQUEST, details) {
     super(message, StatusCodes.BAD_REQUEST, details);
@@ -20,22 +14,14 @@ class UnauthorizedError extends CustomError {
   }
 }
 
-class ForbiddenError extends CustomError {
-  constructor(message = ERROR_MESSAGES.FORBIDDEN, details) {
-    super(message, StatusCodes.FORBIDDEN, details);
-  }
-}
-
-class MailError extends CustomError {
-  constructor(message = ERROR_MESSAGES.EMAIL_SEND_ERROR, details) {
-    super(message, StatusCodes.INTERNAL_SERVER_ERROR, details);
+class ConflictError extends CustomError {
+  constructor(message = ERROR_MESSAGES.DUPLICATE_EMAIL, details) {
+    super(message, StatusCodes.CONFLICT, details);
   }
 }
 
 module.exports = {
-  NotFoundError,
   BadRequestError,
   UnauthorizedError,
-  ForbiddenError,
-  MailError,
+  ConflictError,
 };

@@ -159,7 +159,7 @@ POST /api/auth/logout
 
 ### Authentication
 
-Required.
+Not required; the cookie is cleared even when the user is already logged out.
 
 ### Success Response
 
@@ -176,15 +176,17 @@ The authentication cookie must be cleared.
 
 ---
 
-# 4. Get Current User
+# 4. Get Current User / Profile
 
 Returns the currently authenticated user's information.
 
 ### Endpoint
 
 ```http
-GET /api/auth/me
+GET /api/auth/profile
 ```
+
+`GET /api/auth/me` is also available as an alias.
 
 ### Authentication
 
@@ -197,6 +199,7 @@ Required.
 ```json
 {
   "success": true,
+  "message": "Profile fetched successfully",
   "data": {
     "user": {
       "id": "user-id",

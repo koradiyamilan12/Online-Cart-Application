@@ -6,8 +6,6 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const requiredVariables = [
   "DATABASE_URL",
   "JWT_SECRET",
-  "RESEND_API_KEY",
-  "EMAIL_FROM",
 ];
 
 const missingVariables = requiredVariables.filter(
@@ -29,9 +27,8 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 module.exports = Object.freeze({
   databaseUrl: process.env.DATABASE_URL,
-  emailFrom: process.env.EMAIL_FROM,
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1d",
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV ?? "development",
   port,
-  resendApiKey: process.env.RESEND_API_KEY,
 });

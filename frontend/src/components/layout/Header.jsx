@@ -34,6 +34,9 @@ function Header() {
 
         {isAuthenticated ? (
           <div className="flex items-center gap-3">
+            <Link className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to={ROUTES.DASHBOARD}>
+              Dashboard
+            </Link>
             <span className="hidden text-sm font-medium text-slate-600 sm:inline">Hi, {user?.name?.split(" ")[0] || "there"}</span>
             <Button className="gap-2" onClick={handleLogout} type="button" variant="outline">
               <FiLogOut aria-hidden="true" className="size-4" />

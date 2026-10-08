@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
+import ProductsPage from "@/features/products/pages/ProductsPage";
 import MainLayout from "@/layouts/MainLayout";
 import HomePage from "@/pages/HomePage";
 import NotFoundPage from "@/pages/NotFoundPage";
@@ -21,10 +22,7 @@ function AppRouter() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route
-            path={ROUTES.DASHBOARD}
-            element={<PlaceholderPage description="Product discovery will be implemented in a future phase." title="Dashboard" />}
-          />
+          <Route path={ROUTES.DASHBOARD} element={<ProductsPage />} />
           <Route
             path={ROUTES.CART}
             element={<PlaceholderPage description="Cart management will be implemented in a future phase." title="Your cart" />}

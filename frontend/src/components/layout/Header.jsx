@@ -46,6 +46,9 @@ function Header() {
                 </span>
               ) : null}
             </Link>
+            <Link className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to={ROUTES.ORDERS}>
+              Orders
+            </Link>
             <Link className="text-sm font-medium text-slate-600 transition-colors hover:text-slate-900" to={ROUTES.DASHBOARD}>
               Dashboard
             </Link>

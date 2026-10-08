@@ -13,7 +13,7 @@ const addToCartSchema = z
   })
   .strict();
 
-const cartItemIdSchema = z.coerce.number().int().positive();
+const cartItemIdSchema = z.uuid();
 
 function validateCartItemId(req, _res, next) {
   const result = cartItemIdSchema.safeParse(req.params.cartItemId);

@@ -3,11 +3,13 @@ import { ROUTES } from "@/constants/routes";
 import LoginPage from "@/features/auth/pages/LoginPage";
 import RegisterPage from "@/features/auth/pages/RegisterPage";
 import CartPage from "@/features/cart/pages/CartPage";
+import CheckoutPage from "@/features/orders/pages/CheckoutPage";
+import OrderDetailsPage from "@/features/orders/pages/OrderDetailsPage";
+import OrdersPage from "@/features/orders/pages/OrdersPage";
 import ProductsPage from "@/features/products/pages/ProductsPage";
 import MainLayout from "@/layouts/MainLayout";
 import HomePage from "@/pages/HomePage";
 import NotFoundPage from "@/pages/NotFoundPage";
-import PlaceholderPage from "@/pages/PlaceholderPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
 
@@ -25,18 +27,9 @@ function AppRouter() {
         <Route element={<ProtectedRoute />}>
           <Route path={ROUTES.DASHBOARD} element={<ProductsPage />} />
           <Route path={ROUTES.CART} element={<CartPage />} />
-          <Route
-            path={ROUTES.CHECKOUT}
-            element={<PlaceholderPage description="Checkout will be implemented in a future phase." title="Checkout" />}
-          />
-          <Route
-            path={ROUTES.ORDERS}
-            element={<PlaceholderPage description="Order history will be implemented in a future phase." title="Orders" />}
-          />
-          <Route
-            path={ROUTES.ORDER_DETAILS}
-            element={<PlaceholderPage description="Order details will be implemented in a future phase." title="Order details" />}
-          />
+          <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
+          <Route path={ROUTES.ORDERS} element={<OrdersPage />} />
+          <Route path={ROUTES.ORDER_DETAILS} element={<OrderDetailsPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

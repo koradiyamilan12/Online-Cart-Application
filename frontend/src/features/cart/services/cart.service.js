@@ -1,8 +1,16 @@
 import api from "@/lib/axios";
 
+function requireCart(data) {
+  if (!data || !Array.isArray(data.items) || data.grandTotal == null) {
+    throw new Error("The cart API returned an invalid cart response.");
+  }
+
+  return data;
+}
+
 async function getCart() {
   const response = await api.get("/cart");
-  return response.data?.data ?? { items: [], grandTotal: "0.00" };
+  return requireCart(response.data?.data);
 }
 
 async function addToCart(productId, quantity = 1) {
@@ -10,22 +18,22 @@ async function addToCart(productId, quantity = 1) {
     productId,
     quantity,
   });
-  return response.data?.data ?? { items: [], grandTotal: "0.00" };
+  return requireCart(response.data?.data);
 }
 
 async function increaseCartItem(cartItemId) {
   const response = await api.patch(`/cart/items/${cartItemId}/increase`);
-  return response.data?.data ?? { items: [], grandTotal: "0.00" };
+  return requireCart(response.data?.data);
 }
 
 async function decreaseCartItem(cartItemId) {
   const response = await api.patch(`/cart/items/${cartItemId}/decrease`);
-  return response.data?.data ?? { items: [], grandTotal: "0.00" };
+  return requireCart(response.data?.data);
 }
 
 async function removeCartItem(cartItemId) {
   const response = await api.delete(`/cart/items/${cartItemId}`);
-  return response.data?.data ?? { items: [], grandTotal: "0.00" };
+  return requireCart(response.data?.data);
 }
 
 export { addToCart, decreaseCartItem, getCart, increaseCartItem, removeCartItem };

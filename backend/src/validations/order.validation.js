@@ -3,7 +3,7 @@ const { BadRequestError } = require("../utils/errors");
 const validateBody = require("../middleware/validate.middleware");
 
 const submitOrderSchema = z.object({}).strict().optional();
-const orderIdSchema = z.coerce.number().int().positive();
+const orderIdSchema = z.uuid();
 
 function validateOrderId(req, _res, next) {
   const result = orderIdSchema.safeParse(req.params.orderId);

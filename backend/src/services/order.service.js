@@ -102,6 +102,7 @@ async function createOrderFromCart(userId) {
       id: order.id,
       items: orderItems.map(serializeOrderItem),
       totalAmount,
+      createdAt: order.createdAt,
     };
   });
 }

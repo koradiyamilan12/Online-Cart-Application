@@ -4,6 +4,10 @@ const { connectDB } = require("./src/config/db");
 const logger = require("./src/config/logger");
 
 async function startServer() {
+  logger.info("Resolved Resend sender address", {
+    details: { from: config.getEmailFrom() },
+  });
+
   try {
     await connectDB();
     app.listen(config.port, () => {

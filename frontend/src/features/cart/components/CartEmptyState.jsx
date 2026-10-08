@@ -1,21 +1,25 @@
 import { FiArrowRight, FiShoppingBag } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button-variants";
+import { cn } from "@/lib/utils";
 
 function CartEmptyState() {
-  const navigate = useNavigate();
-
   return (
-    <div className="rounded-xl border border-dashed border-slate-300 bg-white p-8 text-center shadow-sm">
-      <FiShoppingBag aria-hidden="true" className="mx-auto size-10 text-indigo-600" />
-      <h2 className="mt-4 text-xl font-semibold text-slate-900">Your cart is empty</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">Browse products and add something you like.</p>
-      <Button className="mt-5 gap-2" onClick={() => navigate(ROUTES.DASHBOARD)} type="button" variant="outline">
-        Continue shopping
-        <FiArrowRight aria-hidden="true" className="size-4" />
-      </Button>
-    </div>
+    <section className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-[0_2px_8px_rgba(15,23,42,0.025)] sm:py-16">
+      <span className="mx-auto grid size-16 place-items-center rounded-[1.35rem] bg-brand-50 text-brand-700">
+        <FiShoppingBag aria-hidden="true" className="size-7" />
+      </span>
+      <h2 className="mt-5 text-xl font-semibold tracking-tight text-slate-950">
+        Your cart is empty
+      </h2>
+      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-slate-600">
+        Add some products to get started.
+      </p>
+      <Link className={cn(buttonVariants(), "mt-6")} to={ROUTES.DASHBOARD}>
+        Continue shopping <FiArrowRight aria-hidden="true" className="size-4" />
+      </Link>
+    </section>
   );
 }
 

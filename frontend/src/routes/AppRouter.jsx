@@ -1,38 +1,52 @@
+import { createElement, lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
+import PageSkeleton from "@/components/common/PageSkeleton";
 import { ROUTES } from "@/constants/routes";
-import LoginPage from "@/features/auth/pages/LoginPage";
-import RegisterPage from "@/features/auth/pages/RegisterPage";
-import CartPage from "@/features/cart/pages/CartPage";
-import CheckoutPage from "@/features/orders/pages/CheckoutPage";
-import OrderDetailsPage from "@/features/orders/pages/OrderDetailsPage";
-import OrdersPage from "@/features/orders/pages/OrdersPage";
-import ProductsPage from "@/features/products/pages/ProductsPage";
 import MainLayout from "@/layouts/MainLayout";
-import HomePage from "@/pages/HomePage";
-import NotFoundPage from "@/pages/NotFoundPage";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
+
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const LoginPage = lazy(() => import("@/features/auth/pages/LoginPage"));
+const RegisterPage = lazy(() => import("@/features/auth/pages/RegisterPage"));
+const CartPage = lazy(() => import("@/features/cart/pages/CartPage"));
+const CheckoutPage = lazy(() => import("@/features/orders/pages/CheckoutPage"));
+const OrderDetailsPage = lazy(
+  () => import("@/features/orders/pages/OrderDetailsPage"),
+);
+const OrdersPage = lazy(() => import("@/features/orders/pages/OrdersPage"));
+const ProductsPage = lazy(
+  () => import("@/features/products/pages/ProductsPage"),
+);
+const NotFoundPage = lazy(() => import("@/pages/NotFoundPage"));
+
+function renderPage(Page) {
+  return <Suspense fallback={<PageSkeleton />}>{createElement(Page)}</Suspense>;
+}
 
 function AppRouter() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        <Route path={ROUTES.HOME} element={<HomePage />} />
+        <Route element={renderPage(HomePage)} path={ROUTES.HOME} />
 
         <Route element={<PublicRoute />}>
-          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
-          <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
+          <Route element={renderPage(LoginPage)} path={ROUTES.LOGIN} />
+          <Route element={renderPage(RegisterPage)} path={ROUTES.REGISTER} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path={ROUTES.DASHBOARD} element={<ProductsPage />} />
-          <Route path={ROUTES.CART} element={<CartPage />} />
-          <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
-          <Route path={ROUTES.ORDERS} element={<OrdersPage />} />
-          <Route path={ROUTES.ORDER_DETAILS} element={<OrderDetailsPage />} />
+          <Route element={renderPage(ProductsPage)} path={ROUTES.DASHBOARD} />
+          <Route element={renderPage(CartPage)} path={ROUTES.CART} />
+          <Route element={renderPage(CheckoutPage)} path={ROUTES.CHECKOUT} />
+          <Route element={renderPage(OrdersPage)} path={ROUTES.ORDERS} />
+          <Route
+            element={renderPage(OrderDetailsPage)}
+            path={ROUTES.ORDER_DETAILS}
+          />
         </Route>
 
-        <Route path="*" element={<NotFoundPage />} />
+        <Route element={renderPage(NotFoundPage)} path="*" />
       </Route>
     </Routes>
   );

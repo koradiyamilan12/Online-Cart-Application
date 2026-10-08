@@ -15,61 +15,93 @@ const initialState = {
 };
 
 function normalizeCart(cartPayload) {
-  const safeCart = cartPayload && typeof cartPayload === "object" ? cartPayload : {};
+  const safeCart =
+    cartPayload && typeof cartPayload === "object" ? cartPayload : {};
   const items = Array.isArray(safeCart.items) ? safeCart.items : [];
 
   return {
     cart: safeCart,
     items,
-    totalItems: items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0),
+    totalItems: items.reduce(
+      (sum, item) => sum + (Number(item.quantity) || 0),
+      0,
+    ),
     grandTotal: safeCart.grandTotal ?? "0.00",
   };
 }
 
-export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, { rejectWithValue }) => {
-  try {
-    const cart = await cartService.getCart();
-    return cart;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to load your cart."));
-  }
-});
+export const fetchCart = createAsyncThunk(
+  "cart/fetchCart",
+  async (_, { rejectWithValue }) => {
+    try {
+      const cart = await cartService.getCart();
+      return cart;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load your cart."),
+      );
+    }
+  },
+  {
+    condition: (_, { getState }) => !getState().cart.isLoading,
+  },
+);
 
-export const addToCart = createAsyncThunk("cart/addToCart", async ({ productId, quantity = 1 }, { rejectWithValue }) => {
-  try {
-    const cart = await cartService.addToCart(productId, quantity);
-    return cart;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to add product to your cart."));
-  }
-});
+export const addToCart = createAsyncThunk(
+  "cart/addToCart",
+  async ({ productId, quantity = 1 }, { rejectWithValue }) => {
+    try {
+      const cart = await cartService.addToCart(productId, quantity);
+      return cart;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to add product to your cart."),
+      );
+    }
+  },
+);
 
-export const increaseCartItem = createAsyncThunk("cart/increaseCartItem", async (cartItemId, { rejectWithValue }) => {
-  try {
-    const cart = await cartService.increaseCartItem(cartItemId);
-    return cart;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to update your cart."));
-  }
-});
+export const increaseCartItem = createAsyncThunk(
+  "cart/increaseCartItem",
+  async (cartItemId, { rejectWithValue }) => {
+    try {
+      const cart = await cartService.increaseCartItem(cartItemId);
+      return cart;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to update your cart."),
+      );
+    }
+  },
+);
 
-export const decreaseCartItem = createAsyncThunk("cart/decreaseCartItem", async (cartItemId, { rejectWithValue }) => {
-  try {
-    const cart = await cartService.decreaseCartItem(cartItemId);
-    return cart;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to update your cart."));
-  }
-});
+export const decreaseCartItem = createAsyncThunk(
+  "cart/decreaseCartItem",
+  async (cartItemId, { rejectWithValue }) => {
+    try {
+      const cart = await cartService.decreaseCartItem(cartItemId);
+      return cart;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to update your cart."),
+      );
+    }
+  },
+);
 
-export const removeCartItem = createAsyncThunk("cart/removeCartItem", async (cartItemId, { rejectWithValue }) => {
-  try {
-    const cart = await cartService.removeCartItem(cartItemId);
-    return cart;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to remove item from your cart."));
-  }
-});
+export const removeCartItem = createAsyncThunk(
+  "cart/removeCartItem",
+  async (cartItemId, { rejectWithValue }) => {
+    try {
+      const cart = await cartService.removeCartItem(cartItemId);
+      return cart;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to remove item from your cart."),
+      );
+    }
+  },
+);
 
 const cartSlice = createSlice({
   name: "cart",
@@ -197,4 +229,7 @@ export const selectCartState = (state) => state.cart;
 export const selectCartItems = (state) => state.cart.items;
 export const selectCartItemCount = (state) => state.cart.totalItems;
 export const selectCartGrandTotal = (state) => state.cart.grandTotal;
+export const selectIsCartMutating = (state) => state.cart.isMutating;
+export const selectPendingCartProductId = (state) =>
+  state.cart.pendingProductId;
 export default cartSlice.reducer;

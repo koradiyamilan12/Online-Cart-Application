@@ -13,16 +13,9 @@ export function formatCurrency(value, currency = "INR") {
   }).format(Number(value) || 0);
 }
 
-export function getErrorMessage(error, fallback = "Something went wrong. Please try again.") {
-  const responseData = error?.response?.data;
-
-  if (typeof responseData?.message === "string") {
-    return responseData.message;
-  }
-
-  if (typeof error?.message === "string") {
-    return error.message;
-  }
-
+export function getErrorMessage(
+  _error,
+  fallback = "Something went wrong. Please try again.",
+) {
   return fallback;
 }

@@ -11,6 +11,7 @@ const {
 const { createOrderItems } = require("../repositories/order-item.repository");
 const userRepository = require("../repositories/user.repository");
 const { sendOrderSummaryEmail } = require("./email.service");
+const config = require("../config/config");
 const logger = require("../config/logger");
 const { ERROR_MESSAGES } = require("../constants/messages");
 const { BadRequestError, NotFoundError } = require("../utils/errors");
@@ -89,10 +90,7 @@ async function createOrderFromCart(userId) {
     }
 
     const { items, totalAmount } = buildOrderItems(cart.CartItems);
-    const order = await createOrder(
-      { userId, totalAmount },
-      transaction,
-    );
+    const order = await createOrder({ userId, totalAmount }, transaction);
     const orderItems = items.map((item) => ({ ...item, orderId: order.id }));
 
     await createOrderItems(orderItems, transaction);
@@ -114,31 +112,43 @@ async function submitOrderService(userId) {
     throw new NotFoundError(ERROR_MESSAGES.USER_NOT_FOUND);
   }
 
-  // The transaction must complete before email is attempted. A provider failure
-  // is non-critical and must never roll back a completed order.
+  // Persist the order before dispatching email; email delivery must not delay or
+  // prevent the successful order response.
   const order = await createOrderFromCart(userId);
 
-  try {
-    await sendOrderSummaryEmail({
-      customerName: user.name,
-      customerEmail: user.email,
-      orderId: order.id,
-      items: order.items,
-      totalAmount: order.totalAmount,
-    });
-    logger.info("Order confirmation email sent", {
-      details: { orderId: order.id, userId, recipient: user.email },
-    });
-  } catch (error) {
-    logger.error("Order confirmation email failed", {
-      details: {
+  void Promise.resolve()
+    .then(() =>
+      sendOrderSummaryEmail({
+        customerName: user.name,
+        customerEmail: user.email,
+        orderId: order.id,
+        items: order.items,
+        totalAmount: order.totalAmount,
+      }),
+    )
+    .then(() => {
+      logger.info("Order confirmation email sent", {
+        details: { orderId: order.id, userId, recipient: user.email },
+      });
+    })
+    .catch((error) => {
+      const details = {
         orderId: order.id,
         userId,
+        from: config.getEmailFrom(),
         recipient: user.email,
-        error: error.message,
-      },
+        ...(error.providerMessage
+          ? { providerMessage: error.providerMessage }
+          : { error: error.message }),
+      };
+
+      if (error.isResendTestingSenderValidationError) {
+        logger.error(error.message, { details });
+        return;
+      }
+
+      logger.error("Order confirmation email failed", { details });
     });
-  }
 
   return order;
 }

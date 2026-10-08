@@ -11,29 +11,47 @@ const initialState = {
   error: null,
 };
 
-export const fetchOrders = createAsyncThunk("orders/fetchOrders", async (_, { rejectWithValue }) => {
-  try {
-    return await orderService.getOrders();
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to load your orders."));
-  }
-});
+export const fetchOrders = createAsyncThunk(
+  "orders/fetchOrders",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await orderService.getOrders();
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load your orders."),
+      );
+    }
+  },
+);
 
-export const fetchOrderById = createAsyncThunk("orders/fetchOrderById", async (orderId, { rejectWithValue }) => {
-  try {
-    return await orderService.getOrder(orderId);
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to load this order."));
-  }
-});
+export const fetchOrderById = createAsyncThunk(
+  "orders/fetchOrderById",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      return await orderService.getOrder(orderId);
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to load this order."),
+      );
+    }
+  },
+);
 
-export const createOrder = createAsyncThunk("orders/createOrder", async (_, { rejectWithValue }) => {
-  try {
-    return await orderService.createOrder();
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to place your order."));
-  }
-});
+export const createOrder = createAsyncThunk(
+  "orders/createOrder",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await orderService.createOrder();
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to place your order."),
+      );
+    }
+  },
+  {
+    condition: (_, { getState }) => !getState().orders.isSubmitting,
+  },
+);
 
 const orderSlice = createSlice({
   name: "orders",
@@ -86,7 +104,9 @@ const orderSlice = createSlice({
         if (nextOrder && nextOrder.id) {
           state.orders = [
             nextOrder,
-            ...state.orders.filter((order) => String(order.id) !== String(nextOrder.id)),
+            ...state.orders.filter(
+              (order) => String(order.id) !== String(nextOrder.id),
+            ),
           ];
         }
       })

@@ -6,12 +6,7 @@ dotenv.config({
   quiet: true,
 });
 
-const requiredVariables = [
-  "DATABASE_URL",
-  "JWT_SECRET",
-  "RESEND_API_KEY",
-  "EMAIL_FROM",
-];
+const requiredVariables = ["DATABASE_URL", "JWT_SECRET"];
 
 const missingVariables = requiredVariables.filter(
   (name) => !process.env[name]?.trim(),
@@ -31,16 +26,22 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 }
 
 const appName = process.env.APP_NAME?.trim() || "Online Cart";
-const emailFrom = process.env.EMAIL_FROM?.trim() || null;
+
+function getEmailFrom() {
+  return (
+    process.env.EMAIL_FROM ||
+    process.env.RESEND_FROM_EMAIL ||
+    "Online Cart <onboarding@resend.dev>"
+  );
+}
 
 module.exports = Object.freeze({
   appName,
   databaseUrl: process.env.DATABASE_URL,
-  emailFrom,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1d",
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV ?? "development",
   port,
   resendApiKey: process.env.RESEND_API_KEY?.trim() || null,
-  resendFromEmail: emailFrom,
+  getEmailFrom,
 });

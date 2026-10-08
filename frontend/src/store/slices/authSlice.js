@@ -10,41 +10,61 @@ const initialState = {
   error: null,
 };
 
-export const bootstrapAuth = createAsyncThunk("auth/bootstrap", async (_, { rejectWithValue }) => {
-  try {
-    const user = await authService.getCurrentUser();
-    return user;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to verify your session."));
-  }
-});
+export const bootstrapAuth = createAsyncThunk(
+  "auth/bootstrap",
+  async (_, { rejectWithValue }) => {
+    try {
+      const user = await authService.getCurrentUser();
+      return user;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to verify your session."),
+      );
+    }
+  },
+);
 
-export const loginUser = createAsyncThunk("auth/login", async (credentials, { rejectWithValue }) => {
-  try {
-    const user = await authService.loginUser(credentials);
-    return user;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to sign in. Please try again."));
-  }
-});
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const user = await authService.loginUser(credentials);
+      return user;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to sign in. Please try again."),
+      );
+    }
+  },
+);
 
-export const registerUser = createAsyncThunk("auth/register", async (credentials, { rejectWithValue }) => {
-  try {
-    const user = await authService.registerUser(credentials);
-    return user;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to create your account."));
-  }
-});
+export const registerUser = createAsyncThunk(
+  "auth/register",
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const user = await authService.registerUser(credentials);
+      return user;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to create your account."),
+      );
+    }
+  },
+);
 
-export const logoutUser = createAsyncThunk("auth/logout", async (_, { rejectWithValue }) => {
-  try {
-    await authService.logoutUser();
-    return null;
-  } catch (error) {
-    return rejectWithValue(getErrorMessage(error, "Unable to sign out. Please try again."));
-  }
-});
+export const logoutUser = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await authService.logoutUser();
+      return null;
+    } catch (error) {
+      return rejectWithValue(
+        getErrorMessage(error, "Unable to sign out. Please try again."),
+      );
+    }
+  },
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -145,13 +165,19 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.isLoading = false;
-        state.status = "unauthenticated";
+        state.status = state.isAuthenticated
+          ? "authenticated"
+          : "unauthenticated";
         state.error = action.payload || "Unable to sign out.";
       });
   },
 });
 
-export const { clearAuthentication, setAuthenticatedUser, setAuthenticationStatus } = authSlice.actions;
+export const {
+  clearAuthentication,
+  setAuthenticatedUser,
+  setAuthenticationStatus,
+} = authSlice.actions;
 export const selectAuthState = (state) => state.auth;
 export const selectCurrentUser = (state) => state.auth.user;
 export const selectAuthenticationStatus = (state) => state.auth.status;

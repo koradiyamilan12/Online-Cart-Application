@@ -1,17 +1,22 @@
 import { FiAlertCircle } from "react-icons/fi";
 import { cn } from "@/lib/utils";
 
-function ErrorMessage({ className, message = "Something went wrong. Please try again." }) {
+function ErrorMessage({
+  className,
+  message = "Something went wrong. Please try again.",
+}) {
   return (
     <div
       className={cn(
-        "flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800",
+        "flex max-w-2xl items-start gap-3 rounded-xl border border-red-200 bg-red-50/80 p-4 text-sm text-red-900",
         className,
       )}
       role="alert"
     >
-      <FiAlertCircle aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
-      <p>{message}</p>
+      <span className="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-white text-red-700">
+        <FiAlertCircle aria-hidden="true" className="size-4" />
+      </span>
+      <p className="leading-6">{message}</p>
     </div>
   );
 }

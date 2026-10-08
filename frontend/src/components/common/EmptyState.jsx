@@ -3,12 +3,25 @@ import { cn } from "@/lib/utils";
 
 function EmptyState({ className, title, description, action }) {
   return (
-    <div className={cn("rounded-lg border border-dashed bg-white p-8 text-center", className)}>
-      <FiInbox aria-hidden="true" className="mx-auto size-6 text-slate-400" />
-      <h2 className="mt-4 text-base font-semibold text-slate-900">{title}</h2>
-      {description ? <p className="mx-auto mt-2 max-w-md text-sm text-slate-600">{description}</p> : null}
+    <section
+      className={cn(
+        "rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-12 text-center shadow-[0_2px_8px_rgba(15,23,42,0.025)] sm:py-16",
+        className,
+      )}
+    >
+      <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-brand-50 text-brand-700">
+        <FiInbox aria-hidden="true" className="size-6" />
+      </span>
+      <h2 className="mt-4 text-lg font-semibold tracking-tight text-slate-950">
+        {title}
+      </h2>
+      {description ? (
+        <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
+          {description}
+        </p>
+      ) : null}
       {action ? <div className="mt-5">{action}</div> : null}
-    </div>
+    </section>
   );
 }
 

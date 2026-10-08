@@ -1,10 +1,17 @@
+import { useCallback } from "react";
 import { FiRefreshCw } from "react-icons/fi";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import EmptyState from "@/components/common/EmptyState";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Container from "@/components/layout/Container";
+import PageHeader from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
-import { addToCart, selectCartState } from "@/features/cart/slices/cartSlice";
+import {
+  addToCart,
+  selectIsCartMutating,
+  selectPendingCartProductId,
+} from "@/features/cart/slices/cartSlice";
 import ProductGrid from "@/features/products/components/ProductGrid";
 import ProductListSkeleton from "@/features/products/components/ProductListSkeleton";
 import useProducts from "@/features/products/hooks/useProducts";
@@ -13,44 +20,71 @@ import { fetchProducts } from "@/store/slices/productSlice";
 function ProductsPage() {
   const dispatch = useDispatch();
   const { products, isLoading, error } = useProducts();
-  const { pendingProductId } = useSelector(selectCartState);
+  const pendingProductId = useSelector(selectPendingCartProductId);
+  const isMutating = useSelector(selectIsCartMutating);
 
   const handleRefresh = () => {
     dispatch(fetchProducts());
   };
 
-  const handleAddToCart = (product) => {
-    dispatch(addToCart({ productId: product.id, quantity: 1 }));
-  };
+  const handleAddToCart = useCallback(
+    async (product) => {
+      const result = await dispatch(
+        addToCart({ productId: product.id, quantity: 1 }),
+      );
 
-  if (isLoading) {
-    return (
-      <Container className="py-8 sm:py-10 lg:py-12">
-        <ProductListSkeleton />
-      </Container>
-    );
-  }
+      if (addToCart.fulfilled.match(result)) {
+        toast.success("Product added to cart.");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
 
-  if (error) {
-    return (
-      <Container className="py-8 sm:py-10 lg:py-12">
+      return result;
+    },
+    [dispatch],
+  );
+
+  return (
+    <Container className="py-8 sm:py-10 lg:py-12">
+      <PageHeader
+        description="Browse the collection and find something that fits your day."
+        eyebrow="The collection"
+        title="Discover products"
+        action={
+          products.length > 0 ? (
+            <span className="inline-flex rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-600">
+              {products.length} {products.length === 1 ? "item" : "items"}
+            </span>
+          ) : null
+        }
+      />
+
+      {isLoading ? <ProductListSkeleton /> : null}
+
+      {!isLoading && error ? (
         <div className="space-y-4">
           <ErrorMessage message={error} />
-          <Button className="gap-2" onClick={handleRefresh} type="button" variant="outline">
+          <Button
+            className="gap-2"
+            onClick={handleRefresh}
+            type="button"
+            variant="outline"
+          >
             <FiRefreshCw aria-hidden="true" className="size-4" />
             Try again
           </Button>
         </div>
-      </Container>
-    );
-  }
+      ) : null}
 
-  if (!products.length) {
-    return (
-      <Container className="py-8 sm:py-10 lg:py-12">
+      {!isLoading && !error && !products.length ? (
         <EmptyState
           action={
-            <Button className="gap-2" onClick={handleRefresh} type="button" variant="outline">
+            <Button
+              className="gap-2"
+              onClick={handleRefresh}
+              type="button"
+              variant="outline"
+            >
               <FiRefreshCw aria-hidden="true" className="size-4" />
               Refresh products
             </Button>
@@ -58,21 +92,16 @@ function ProductsPage() {
           description="The catalog is empty right now. Check back shortly for new arrivals."
           title="No products available"
         />
-      </Container>
-    );
-  }
+      ) : null}
 
-  return (
-    <Container className="py-8 sm:py-10 lg:py-12">
-      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm font-medium uppercase tracking-[0.2em] text-indigo-600">Dashboard</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Explore products</h1>
-        </div>
-        <p className="text-sm text-slate-600">{products.length} items available</p>
-      </div>
-
-      <ProductGrid addingProductId={pendingProductId} onAddToCart={handleAddToCart} products={products} />
+      {!isLoading && !error && products.length ? (
+        <ProductGrid
+          addingProductId={pendingProductId}
+          isMutating={isMutating}
+          onAddToCart={handleAddToCart}
+          products={products}
+        />
+      ) : null}
     </Container>
   );
 }

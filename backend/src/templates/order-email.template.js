@@ -30,7 +30,7 @@ function formatInr(amount) {
   return `₹${groupedAmount}.${fraction}`;
 }
 
-function buildOrderSummaryEmail({ customerName, items, totalAmount }) {
+function buildOrderSummaryEmail({ customerName, items, totalAmount, appName = "Online Cart" }) {
   const htmlRows = items
     .map(
       (item) => `
@@ -60,7 +60,7 @@ function buildOrderSummaryEmail({ customerName, items, totalAmount }) {
   <body style="margin: 0; padding: 24px 12px; background: #f8fafc; color: #1f2937; font-family: Arial, sans-serif;">
     <main style="max-width: 640px; margin: 0 auto; padding: 28px; background: #ffffff; border: 1px solid #e5e7eb; border-radius: 8px;">
       <h2 style="margin: 0 0 16px; color: #111827;">Your order summary</h2>
-      <p style="margin: 0 0 24px; line-height: 1.5;">Hi ${escapeHtml(customerName)}, thanks for your order. Here is your bill:</p>
+      <p style="margin: 0 0 24px; line-height: 1.5;">Hi ${escapeHtml(customerName)}, thanks for your order from ${escapeHtml(appName)}. Here is your bill:</p>
       <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
           <thead>
@@ -81,11 +81,11 @@ function buildOrderSummaryEmail({ customerName, items, totalAmount }) {
           </tfoot>
         </table>
       </div>
-      <p style="margin: 28px 0 0; line-height: 1.5;">Thank you for shopping with us.</p>
+      <p style="margin: 28px 0 0; line-height: 1.5;">Thank you for shopping with ${escapeHtml(appName)}.</p>
     </main>
   </body>
 </html>`,
-    text: `Hi ${customerName},\n\nThanks for your order. Here is your bill:\n\n${textItems}\n\nGrand Total: ${formattedTotal}\n\nThank you for shopping with us.`,
+    text: `Hi ${customerName},\n\nThanks for your order from ${appName}. Here is your bill:\n\n${textItems}\n\nGrand Total: ${formattedTotal}\n\nThank you for shopping with ${appName}.`,
   };
 }
 

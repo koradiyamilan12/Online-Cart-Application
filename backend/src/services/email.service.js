@@ -11,7 +11,9 @@ async function sendOrderSummaryEmail({
   items,
   totalAmount,
 }) {
-  if (!resend || !config.resendFromEmail) {
+  const senderAddress = config.emailFrom || config.resendFromEmail;
+
+  if (!resend || !senderAddress) {
     throw new Error("Order email service is not configured");
   }
 
@@ -20,12 +22,13 @@ async function sendOrderSummaryEmail({
     orderId,
     items,
     totalAmount,
+    appName: config.appName,
   });
 
   let result;
   try {
     result = await resend.emails.send({
-      from: config.resendFromEmail,
+      from: senderAddress,
       to: [customerEmail],
       subject: "Your order summary",
       html,

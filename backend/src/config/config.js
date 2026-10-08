@@ -9,6 +9,8 @@ dotenv.config({
 const requiredVariables = [
   "DATABASE_URL",
   "JWT_SECRET",
+  "RESEND_API_KEY",
+  "EMAIL_FROM",
 ];
 
 const missingVariables = requiredVariables.filter(
@@ -28,12 +30,17 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
   throw new Error("PORT must be an integer between 1 and 65535.");
 }
 
+const appName = process.env.APP_NAME?.trim() || "Online Cart";
+const emailFrom = process.env.EMAIL_FROM?.trim() || null;
+
 module.exports = Object.freeze({
+  appName,
   databaseUrl: process.env.DATABASE_URL,
+  emailFrom,
   jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? "1d",
   jwtSecret: process.env.JWT_SECRET,
   nodeEnv: process.env.NODE_ENV ?? "development",
   port,
   resendApiKey: process.env.RESEND_API_KEY?.trim() || null,
-  resendFromEmail: process.env.RESEND_FROM_EMAIL?.trim() || null,
+  resendFromEmail: emailFrom,
 });

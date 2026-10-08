@@ -1,30 +1,38 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 
-const Cart = sequelize.define(
-  "Cart",
+const Order = sequelize.define(
+  "Order",
   {
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
     },
     userId: {
       type: DataTypes.UUID,
       allowNull: false,
-      unique: true,
       field: "user_id",
       references: {
         model: "users",
         key: "id",
       },
     },
+    totalAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      field: "total_amount",
+      validate: {
+        isDecimal: true,
+        min: 0.01,
+      },
+    },
   },
   {
-    tableName: "carts",
+    tableName: "orders",
     timestamps: true,
     underscored: true,
   },
 );
 
-module.exports = Cart;
+module.exports = Order;

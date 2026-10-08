@@ -2,8 +2,9 @@ const {
   sequelize,
   ensureUuidProductIds,
   restoreProductForeignKey,
-} = require("../../config/db");
+} = require("../config/db");
 const Product = require("../models/product.model");
+const logger = require("../config/logger");
 
 const products = [
   { name: "Wireless Mouse", price: "499.00" },
@@ -34,7 +35,7 @@ async function seedProducts() {
     await Product.bulkCreate(missingProducts, { validate: true });
   }
 
-  console.info(
+  logger.info(
     missingProducts.length === 0
       ? "Product seed data is already present; no rows added."
       : `Seeded ${missingProducts.length} product(s).`,
@@ -43,7 +44,7 @@ async function seedProducts() {
 
 seedProducts()
   .catch((error) => {
-    console.error("Failed to seed products:", error.message);
+    logger.error("Failed to seed products: %s", error.message);
     process.exitCode = 1;
   })
   .finally(async () => {

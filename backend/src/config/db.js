@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const config = require("./config");
+const logger = require("./logger");
 
 const sequelize = new Sequelize(config.databaseUrl, {
   dialect: "postgres",
@@ -99,18 +100,37 @@ async function ensureCartItemQuantityConstraint() {
   `);
 }
 
+async function ensureOrderItemQuantityConstraint() {
+  await sequelize.query(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'order_items_quantity_min_check'
+          AND conrelid = 'order_items'::regclass
+      ) THEN
+        ALTER TABLE order_items
+        ADD CONSTRAINT order_items_quantity_min_check CHECK (quantity >= 1);
+      END IF;
+    END
+    $$;
+  `);
+}
+
 async function connectDB() {
   try {
     await sequelize.authenticate();
     await ensureUuidProductIds();
-    require("../src/models/associations");
+    require("../models/associations");
     await sequelize.sync({ alter: true });
     await ensureCartItemQuantityConstraint();
+    await ensureOrderItemQuantityConstraint();
     await restoreProductForeignKey("cart_items");
     await restoreProductForeignKey("order_items");
-    console.info("Database connection established.");
+    logger.info("Database connection established.");
   } catch (error) {
-    console.error("Error connecting to the database:", error.message);
+    logger.error("Error connecting to the database: %s", error.message);
     throw error;
   }
 }
@@ -120,4 +140,5 @@ module.exports = {
   sequelize,
   ensureUuidProductIds,
   restoreProductForeignKey,
+  ensureOrderItemQuantityConstraint,
 };

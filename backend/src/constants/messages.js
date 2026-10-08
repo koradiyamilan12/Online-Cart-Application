@@ -7,6 +7,8 @@ const ERROR_MESSAGES = {
   DUPLICATE_EMAIL: "Email already registered",
   PRODUCT_NOT_FOUND: "Product not found",
   CART_ITEM_NOT_FOUND: "Cart item not found",
+  CART_EMPTY: "Cart is empty",
+  ORDER_NOT_FOUND: "Order not found",
   INVALID_QUANTITY: "Quantity must be at least 1",
 };
 
@@ -21,6 +23,9 @@ const SUCCESS_MESSAGES = {
   CART_ITEM_ADDED: "Product added to cart successfully",
   CART_ITEM_UPDATED: "Cart item updated successfully",
   CART_ITEM_REMOVED: "Cart item removed successfully",
+  ORDER_CREATED: "Order created successfully",
+  ORDERS_FETCHED: "Orders fetched successfully",
+  ORDER_FETCHED: "Order fetched successfully",
 };
 
 module.exports = {

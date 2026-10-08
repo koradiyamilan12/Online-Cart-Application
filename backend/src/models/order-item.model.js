@@ -1,20 +1,20 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/db");
 
-const CartItem = sequelize.define(
-  "CartItem",
+const OrderItem = sequelize.define(
+  "OrderItem",
   {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
     },
-    cartId: {
-      type: DataTypes.UUID,
+    orderId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
-      field: "cart_id",
+      field: "order_id",
       references: {
-        model: "carts",
+        model: "orders",
         key: "id",
       },
     },
@@ -27,6 +27,14 @@ const CartItem = sequelize.define(
         key: "id",
       },
     },
+    productName: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      field: "product_name",
+      validate: {
+        notEmpty: true,
+      },
+    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -34,17 +42,29 @@ const CartItem = sequelize.define(
         min: 1,
       },
     },
+    unitPrice: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      field: "unit_price",
+      validate: {
+        isDecimal: true,
+        min: 0.01,
+      },
+    },
+    lineTotal: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+      field: "line_total",
+      validate: {
+        isDecimal: true,
+        min: 0.01,
+      },
+    },
   },
   {
-    tableName: "cart_items",
+    tableName: "order_items",
     timestamps: true,
     underscored: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ["cart_id", "product_id"],
-      },
-    ],
     validate: {
       quantityIsPositive() {
         if (!Number.isInteger(this.quantity) || this.quantity < 1) {
@@ -55,4 +75,4 @@ const CartItem = sequelize.define(
   },
 );
 
-module.exports = CartItem;
+module.exports = OrderItem;

@@ -1,4 +1,4 @@
-const { sequelize } = require("../../config/db");
+const { sequelize } = require("../config/db");
 const { UniqueConstraintError } = require("sequelize");
 const {
   findOrCreateCartByUserId,

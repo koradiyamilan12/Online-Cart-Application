@@ -1,15 +1,16 @@
 const app = require("./src/app");
-const config = require("./config/config");
-const { connectDB } = require("./config/db");
+const config = require("./src/config/config");
+const { connectDB } = require("./src/config/db");
+const logger = require("./src/config/logger");
 
 async function startServer() {
   try {
     await connectDB();
     app.listen(config.port, () => {
-      console.info(`Server listening on port ${config.port}.`);
+      logger.info("Server listening on port %d.", config.port);
     });
   } catch (error) {
-    console.error(`Failed to start server: ${error.message}`);
+    logger.error("Failed to start server: %s", error.message);
     process.exitCode = 1;
   }
 }

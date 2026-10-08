@@ -36,10 +36,18 @@ async function findCartWithItemsByUserId(userId, options = {}) {
   });
 }
 
+async function clearCart(cartId, transaction) {
+  return CartItem.destroy({
+    where: { cartId },
+    transaction,
+  });
+}
+
 module.exports = {
   findCartByUserId,
   createCart,
   findCartById,
   findOrCreateCartByUserId,
   findCartWithItemsByUserId,
+  clearCart,
 };

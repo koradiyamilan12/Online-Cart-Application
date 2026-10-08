@@ -49,7 +49,9 @@ async function restoreProductForeignKey(tableName) {
   }
 
   if (!(await getColumnType(tableName, "product_id"))) {
-    await sequelize.query(`ALTER TABLE ${tableName} ADD COLUMN product_id UUID`);
+    await sequelize.query(
+      `ALTER TABLE ${tableName} ADD COLUMN product_id UUID`,
+    );
     await sequelize.query(`
       ALTER TABLE ${tableName}
       ADD CONSTRAINT ${tableName}_product_id_fkey
@@ -69,17 +71,41 @@ async function ensureUuidProductIds() {
     await sequelize.query(
       "ALTER TABLE IF EXISTS order_items DROP CONSTRAINT IF EXISTS order_items_product_id_fkey",
     );
-    await sequelize.query("ALTER TABLE IF EXISTS cart_items DROP COLUMN IF EXISTS product_id");
-    await sequelize.query("ALTER TABLE IF EXISTS order_items DROP COLUMN IF EXISTS product_id");
+    await sequelize.query(
+      "ALTER TABLE IF EXISTS cart_items DROP COLUMN IF EXISTS product_id",
+    );
+    await sequelize.query(
+      "ALTER TABLE IF EXISTS order_items DROP COLUMN IF EXISTS product_id",
+    );
     await sequelize.query("DROP TABLE IF EXISTS products");
   }
+}
+
+async function ensureCartItemQuantityConstraint() {
+  await sequelize.query(`
+    DO $$
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'cart_items_quantity_min_check'
+          AND conrelid = 'cart_items'::regclass
+      ) THEN
+        ALTER TABLE cart_items
+        ADD CONSTRAINT cart_items_quantity_min_check CHECK (quantity >= 1);
+      END IF;
+    END
+    $$;
+  `);
 }
 
 async function connectDB() {
   try {
     await sequelize.authenticate();
     await ensureUuidProductIds();
+    require("../src/models/associations");
     await sequelize.sync({ alter: true });
+    await ensureCartItemQuantityConstraint();
     await restoreProductForeignKey("cart_items");
     await restoreProductForeignKey("order_items");
     console.info("Database connection established.");
@@ -89,4 +115,9 @@ async function connectDB() {
   }
 }
 
-module.exports = { connectDB, sequelize, ensureUuidProductIds, restoreProductForeignKey };
+module.exports = {
+  connectDB,
+  sequelize,
+  ensureUuidProductIds,
+  restoreProductForeignKey,
+};

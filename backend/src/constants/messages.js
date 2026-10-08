@@ -6,6 +6,8 @@ const ERROR_MESSAGES = {
   INVALID_EMAIL_OR_PASSWORD: "Invalid email or password",
   DUPLICATE_EMAIL: "Email already registered",
   PRODUCT_NOT_FOUND: "Product not found",
+  CART_ITEM_NOT_FOUND: "Cart item not found",
+  INVALID_QUANTITY: "Quantity must be at least 1",
 };
 
 const SUCCESS_MESSAGES = {
@@ -15,6 +17,10 @@ const SUCCESS_MESSAGES = {
   PROFILE_FETCHED: "Profile fetched successfully",
   PRODUCTS_FETCHED: "Products fetched successfully",
   PRODUCT_FETCHED: "Product fetched successfully",
+  CART_FETCHED: "Cart fetched successfully",
+  CART_ITEM_ADDED: "Product added to cart successfully",
+  CART_ITEM_UPDATED: "Cart item updated successfully",
+  CART_ITEM_REMOVED: "Cart item removed successfully",
 };
 
 module.exports = {

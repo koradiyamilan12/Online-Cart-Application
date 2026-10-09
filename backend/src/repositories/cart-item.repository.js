@@ -1,4 +1,4 @@
-const { literal } = require("sequelize");
+const { Op } = require("sequelize");
 const CartItem = require("../models/cart-item.model");
 
 async function findCartItem(cartId, productId, options = {}) {
@@ -49,13 +49,17 @@ async function adjustCartItemQuantity(
     return;
   }
 
-  await CartItem.update(
-    { quantity: literal('GREATEST("quantity" - 1, 1)') },
-    {
-      where: { id: cartItemId, cartId },
+  if (amount < 0) {
+    await CartItem.decrement("quantity", {
+      by: 1,
+      where: {
+        id: cartItemId,
+        cartId,
+        quantity: { [Op.gt]: 1 },
+      },
       ...options,
-    },
-  );
+    });
+  }
 }
 
 async function deleteCartItem(cartItemId, cartId, options = {}) {

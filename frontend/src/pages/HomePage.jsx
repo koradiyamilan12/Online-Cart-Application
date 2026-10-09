@@ -1,4 +1,5 @@
 import { createElement } from "react";
+import { useSelector } from "react-redux";
 import {
   FiArrowRight,
   FiCheck,
@@ -11,6 +12,7 @@ import { buttonVariants } from "@/components/ui/button-variants";
 import Container from "@/components/layout/Container";
 import { ROUTES } from "@/constants/routes";
 import { cn } from "@/lib/utils";
+import { selectAuthState } from "@/store/slices/authSlice";
 
 const highlights = [
   {
@@ -32,6 +34,8 @@ const highlights = [
 ];
 
 function HomePage() {
+  const { isAuthenticated } = useSelector(selectAuthState);
+
   return (
     <Container className="py-7 sm:py-10 lg:py-14">
       <section className="relative isolate overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.045)]">
@@ -67,15 +71,17 @@ function HomePage() {
                   className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5"
                 />
               </Link>
-              <Link
-                className={cn(
-                  buttonVariants({ variant: "outline", size: "lg" }),
-                  "w-full sm:w-auto",
-                )}
-                to={ROUTES.REGISTER}
-              >
-                Create an account
-              </Link>
+              {!isAuthenticated ? (
+                <Link
+                  className={cn(
+                    buttonVariants({ variant: "outline", size: "lg" }),
+                    "w-full sm:w-auto",
+                  )}
+                  to={ROUTES.REGISTER}
+                >
+                  Create an account
+                </Link>
+              ) : null}
             </div>
             <div className="mt-6 flex items-center gap-2 text-xs font-medium text-slate-500">
               <span className="grid size-5 place-items-center rounded-full bg-emerald-50 text-emerald-700">

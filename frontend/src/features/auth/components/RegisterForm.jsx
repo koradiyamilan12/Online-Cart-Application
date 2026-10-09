@@ -1,7 +1,10 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { useState } from "react";
 import {
   FiAlertCircle,
   FiArrowRight,
+  FiEye,
+  FiEyeOff,
   FiLock,
   FiMail,
   FiUser,
@@ -26,6 +29,8 @@ const initialValues = {
 function RegisterForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting, setStatus }) => {
     const result = await dispatch(registerUser(values));
@@ -91,7 +96,7 @@ function RegisterForm() {
                 id="name"
                 name="name"
                 required
-                placeholder="Priya Shah"
+                placeholder="Enter your full name"
                 type="text"
               />
             </div>
@@ -167,15 +172,28 @@ function RegisterForm() {
                 autoComplete="new-password"
                 className={
                   touched.password && errors.password
-                    ? "border-red-300 pl-10 focus:border-red-500 focus:ring-red-500/10"
-                    : "pl-10"
+                    ? "border-red-300 pl-10 pr-10 focus:border-red-500 focus:ring-red-500/10"
+                    : "pl-10 pr-10"
                 }
                 id="password"
                 name="password"
                 required
                 placeholder="Create a strong password"
-                type="password"
+                type={passwordVisible ? "text" : "password"}
               />
+              <button
+                aria-label={passwordVisible ? "Hide password" : "Show password"}
+                aria-pressed={passwordVisible}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                onClick={() => setPasswordVisible((visible) => !visible)}
+                type="button"
+              >
+                {passwordVisible ? (
+                  <FiEyeOff aria-hidden="true" className="size-4" />
+                ) : (
+                  <FiEye aria-hidden="true" className="size-4" />
+                )}
+              </button>
             </div>
             <ErrorMessage
               className="text-sm text-red-700"
@@ -211,15 +229,32 @@ function RegisterForm() {
                 autoComplete="new-password"
                 className={
                   touched.confirmPassword && errors.confirmPassword
-                    ? "border-red-300 pl-10 focus:border-red-500 focus:ring-red-500/10"
-                    : "pl-10"
+                    ? "border-red-300 pl-10 pr-10 focus:border-red-500 focus:ring-red-500/10"
+                    : "pl-10 pr-10"
                 }
                 id="confirmPassword"
                 name="confirmPassword"
                 required
                 placeholder="Re-enter your password"
-                type="password"
+                type={confirmPasswordVisible ? "text" : "password"}
               />
+              <button
+                aria-label={
+                  confirmPasswordVisible
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
+                aria-pressed={confirmPasswordVisible}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
+                onClick={() => setConfirmPasswordVisible((visible) => !visible)}
+                type="button"
+              >
+                {confirmPasswordVisible ? (
+                  <FiEyeOff aria-hidden="true" className="size-4" />
+                ) : (
+                  <FiEye aria-hidden="true" className="size-4" />
+                )}
+              </button>
             </div>
             <ErrorMessage
               className="text-sm text-red-700"

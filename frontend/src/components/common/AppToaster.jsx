@@ -6,7 +6,7 @@ function AppToaster() {
       position="top-right"
       gutter={8}
       toastOptions={{
-        duration: 3500,
+        duration: 1000,
         ariaProps: {
           role: "status",
           "aria-live": "polite",
